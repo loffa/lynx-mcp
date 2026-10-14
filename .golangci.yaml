@@ -1,0 +1,146 @@
+version: "2"
+run:
+  concurrency: 4
+  issues-exit-code: 1
+  tests: false
+output:
+  formats:
+    text:
+      path: stdout
+      print-linter-name: true
+      print-issued-lines: true
+linters:
+  default: all
+  disable:
+    - cyclop
+    - depguard
+    - dupl
+    - err113
+    - errorlint
+    - exhaustruct
+    - exhaustruct_v5
+    - funlen
+    - gochecknoglobals
+    - gochecknoinits
+    - gocyclo
+    - godox
+    - gomodguard # Replaced by gomodguard_v2, enabled by default: all.
+    - gosmopolitan
+    - interfacebloat
+    - ireturn
+    - lll
+    - loggercheck
+    - mnd
+    - musttag
+    - noinlineerr
+    - nosprintfhostport
+    - paralleltest
+    - perfsprint
+    - prealloc
+    - tagalign
+    - tagliatelle
+    - testpackage
+    - unqueryvet
+    - varnamelen
+    - wrapcheck
+    - wsl
+  settings:
+    dogsled:
+      max-blank-identifiers: 2
+    errcheck:
+      check-type-assertions: false
+      check-blank: false
+    exhaustive:
+      default-signifies-exhaustive: true
+    gocognit:
+      min-complexity: 50
+    goconst:
+      min-len: 3
+      min-occurrences: 3
+    gocritic:
+      disabled-checks:
+        - hugeParam
+        - unnamedResult
+        - whyNoLint
+      enabled-tags:
+        - diagnostic
+        - experimental
+        - opinionated
+        - performance
+        - style
+      settings:
+        rangeValCopy:
+          sizeThreshold: 1024
+    gosec:
+      excludes:
+        - G101  # Look for hard coded credentials.
+        - G115  # Potential integer overflow when converting between integer types
+        - G601  # Implicit memory aliasing of items from a range statement
+        - G704  # SSRF Tainting on env variables in HTTP constructed paths
+    revive:
+      rules:
+        # https://github.com/mgechev/revive/blob/HEAD/RULES_DESCRIPTIONS.md#package-comments
+        - name: package-comments
+          disabled: true
+        - name: exported
+          disabled: false
+    staticcheck:
+      checks:
+        - all
+        - -S1028  # Simplify error construction with 'fmt.Errorf'.
+        - -ST1000  # Incorrect or missing package comment.
+    unparam:
+      check-exported: false
+    whitespace:
+      multi-if: false
+      multi-func: false
+  exclusions:
+    generated: lax
+    presets:
+      - common-false-positives
+      - legacy
+      - std-error-handling
+    paths:
+      - examples/*
+      - ".*\\_mock\\.go"
+      - ".*\\_mocks\\_test\\.go"
+    rules:
+      # Keep standard JSON Schema vocabulary literal in MCP tool definitions.
+      - path: internal/httpserver/
+        linters:
+          - goconst
+        text: '^string `(type|object|required|additionalProperties|properties|integer|minimum|maximum|description|array|items|string|boolean|default)` has '
+      - path: ".*\\.go"
+        text: 'string `true` has \d+ occurrences, make it a constant'
+      - path: "main\\.go"
+        linters:
+          - gochecknoglobals
+issues:
+  max-issues-per-linter: 0
+  max-same-issues: 0
+  new: false
+formatters:
+  enable:
+    - gci
+    - gofmt
+    - gofumpt
+    - goimports
+  settings:
+    gci:
+      sections:
+        - standard
+        - default
+        - prefix(lynx-mcp)
+    gofmt:
+      simplify: true
+    gofumpt:
+      module-path: lynx-mcp
+    goimports:
+      local-prefixes:
+        - lynx-mcp
+  exclusions:
+    generated: lax
+    paths:
+      - examples/*
+      - ".*\\_mock\\.go"
+      - ".*\\_mocks\\_test\\.go"

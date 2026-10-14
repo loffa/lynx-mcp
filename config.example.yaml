@@ -1,0 +1,21 @@
+# Copy this file to lynx-mcp.yaml and replace the API-key placeholder before
+# starting the server. Do not commit real credentials.
+permissions:
+  # MQTT always connects; this permission controls whether tools may publish.
+  allow_control: false
+
+http:
+  listen: ":8080"
+  read_timeout: 30s
+  read_header_timeout: 5s
+  write_timeout: 35s
+  idle_timeout: 60s
+  shutdown_timeout: 15s
+
+lynx:
+  api_base: "https://lynx.iotopen.se"
+  api_key: "replace-with-your-lynx-api-key"
+  mqtt:
+    broker: "ssl://lynx.iotopen.se:8883"
+    # Use a different MQTT client ID for each running MCP server.
+    client_id: "lynx-mcp-unique-instance"
